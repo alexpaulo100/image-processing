@@ -1,61 +1,81 @@
-import os
-from matplotlib.image import imsave
+import time
+
 import numpy as np
+from skimage.color import rgb2gray
+from skimage.exposure import match_histograms
+from skimage.metrics import structural_similarity
+
 from image_processor.image_utils import read_image, save_image
 from image_processor.processing import resize_image
-from image_processor.visualization import plot_image
+
+
+def find_difference(image1, image2):
+    assert image1.shape == image2.shape, "Specify 2 images with the same shape."
+
+    gray_image1 = rgb2gray(image1)
+    gray_image2 = rgb2gray(image2)
+
+    data_range = gray_image1.max() - gray_image1.min()
+    (score, difference_image) = structural_similarity(
+        gray_image1, gray_image2, full=True, data_range=data_range
+    )
+
+    print("Similarity of the images:", score)
+
+    normalized_difference_image = (difference_image - np.min(difference_image)) / (
+        np.max(difference_image) - np.min(difference_image)
+    )
+
+    return normalized_difference_image
+
+
+def transfer_histogram(image1, image2):
+    matched_image = match_histograms(image1, image2)
+    return matched_image
+
 
 def main():
     print("Iniciando o processamento da imagem...")
 
-    input_image_path = "image_processor/assets/imag-1.jpg"  
-    output_image_path = "image_processor/assets/output/imag-1_resized.jpg"  
+    input_image_path1 = "image_processor/assets/imag-1.jpg"
+    input_image_path2 = "image_processor/assets/imag-2.jpg"
 
-    # Ler a imagem
-    image = read_image(input_image_path)
-    print(f"Imagem lida com sucesso: {input_image_path}")
-    print(f"Tipo da imagem: {type(image)}")
+    image1 = read_image(input_image_path1)
+    image2 = read_image(input_image_path2)
 
-    # Verifique se a imagem foi lida corretamente
-    if not isinstance(image, np.ndarray):
-        raise ValueError("A imagem não foi lida corretamente, verifique a função read_image.")
+    print(f"Dimensões da imagem 1: {image1.shape}")
+    print(f"Dimensões da imagem 2: {image2.shape}")
 
-    # Redimensionar a imagem
-    resized_image = resize_image(image, proportion=0.5)
-    print("Imagem redimensionada.")
-    print(f"Tipo da imagem redimensionada: {type(resized_image)}")
+    # Determine as novas dimensões
+    target_height = min(image1.shape[0], image2.shape[0])
+    target_width = min(image1.shape[1], image2.shape[1])
+    target_size = (target_height, target_width)
 
-    # Verifique se a imagem redimensionada é um array NumPy
-    if not isinstance(resized_image, np.ndarray):
-        raise ValueError("A imagem redimensionada não foi gerada corretamente.")
+    # Redimensionar ambas as imagens para o mesmo tamanho
+    resized_image1 = resize_image(image1, target_size)
+    resized_image2 = resize_image(image2, target_size)
 
-    # Criar o diretório de saída se não existir
-    output_dir = os.path.dirname(output_image_path)
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-        print(f"Diretório criado: {output_dir}")
+    print(f"Dimensões da imagem 1 redimensionada: {resized_image1.shape}")
+    print(f"Dimensões da imagem 2 redimensionada: {resized_image2.shape}")
 
-    # Salvar a imagem redimensionada
-    try:
-        print(f"Salvando imagem em: {output_image_path}")
-        save_image(output_image_path, resized_image)
-        print(f"Imagem salva: {output_image_path}")
-    except Exception as e:
-        print(f"Erro ao salvar a imagem: {e}")
+    difference_image = find_difference(resized_image1, resized_image2)
 
-    # Plotar a imagem redimensionada
-    try:
-        print("Plotando a imagem redimensionada...")
-        plot_image(resized_image)
-    except Exception as e:
-        print(f"Erro ao plotar a imagem: {e}")
+    # Salvar a imagem de diferença
+    output_difference_image_path = (
+        f"image_processor/assets/output/difference_image_{int(time.time())}.jpg"
+    )
+    save_image(output_difference_image_path, difference_image)
 
-    print(f"Image shape: {image.shape}, dtype: {image.dtype}")
+    matched_image = transfer_histogram(resized_image1, resized_image2)
+
+    # Salvar a imagem com histograma transferido
+    output_matched_image_path = (
+        f"image_processor/assets/output/matched_image_{int(time.time())}.jpg"
+    )
+    save_image(output_matched_image_path, matched_image)
+
+    print("Processamento concluído.")
+
 
 if __name__ == "__main__":
-    try:
-        main()
-    except Exception as e:
-        print(f"An error occurred: {e}")
-
-
+    main()
