@@ -1,4 +1,3 @@
-# image_processing_package/visualization.py
 import matplotlib.pyplot as plt
 
 def plot_image(image):
