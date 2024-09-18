@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 with open("README.md", "r") as f:
-    long_description = f.read()
+    page_description = f.read()
 
 with open("requirements.txt") as f:
     requirements = f.read().splitlines()
@@ -12,15 +12,10 @@ setup(
     author="Alex Silva",
     author_email="alex.paulo100@gmail.com",
     description="Python package to perform various image processing tasks",
-    long_description=long_description,
+    long_description=page_description,
     long_description_content_type="text/markdown",
     url="https://github.com/alexpaulo100/image-processing.git",
     packages=find_packages(),
     install_requires=requirements,
     python_requires='>=3.12',
-    classifiers=[
-        "Programming Language :: Python :: 3",
-        "Operating System :: OS Independent",
-    ],
-    
 )
