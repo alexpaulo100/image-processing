@@ -17,3 +17,6 @@ scipy
 setuptools
 six
 tifffile
+twine
+wheel
+zipp
