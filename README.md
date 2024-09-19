@@ -2,6 +2,9 @@
 
 Image Processor is a Python package for performing various image processing tasks, including resizing images, finding differences between images, and transferring histograms.
 
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+
+
 ## Features
 
 - **Resize Images**: Adjust the dimensions of images to a specified size.
