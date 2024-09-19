@@ -14,7 +14,6 @@ setup(
     description="Python package to perform various image processing tasks",
     long_description=page_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/alexpaulo100/image-processing.git",
     packages=find_packages(),
     install_requires=requirements,
     python_requires='>=3.12',
