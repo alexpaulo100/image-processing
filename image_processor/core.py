@@ -1,5 +1,6 @@
-import time
 import os
+import time
+
 import numpy as np
 from skimage.color import rgb2gray
 from skimage.exposure import match_histograms
@@ -42,7 +43,7 @@ def find_difference(image1, image2):
 
 def transfer_histogram(image1, image2):
     """
-    Transfere   
+    Transfere
     o histograma de uma imagem para outra.
 
     Args:
@@ -91,8 +92,6 @@ def main():
 
     difference_image = find_difference(resized_image1, resized_image2)
 
-
-
     # Definir o diretório de saída usando caminho relativo
     output_dir = "assets/output"
     os.makedirs(output_dir, exist_ok=True)
@@ -114,10 +113,6 @@ def main():
     save_image(output_matched_image_path, matched_image)
 
     print("Processamento concluído.")
-
-
-
-
 
 
 if __name__ == "__main__":
